@@ -1,0 +1,1 @@
+export const GRACEFUL_SHUTDOWN_TIMEOUT = 60_000;

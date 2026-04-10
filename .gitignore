@@ -1,0 +1,8 @@
+# Build
+dist
+# Deps
+node_modules
+# Env
+.env
+# Misc
+.DS_Store
