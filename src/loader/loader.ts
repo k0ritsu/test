@@ -1,7 +1,6 @@
 import type Router from 'find-my-way';
 import { readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import process from 'node:process';
 
 interface Module {
   name: string;
@@ -26,7 +25,7 @@ interface ModuleMain {
 }
 
 export async function loadModules() {
-  const items = await readdir(resolve(process.cwd(), 'src/modules'), {
+  const items = await readdir(resolve(import.meta.dirname, '..', 'modules'), {
     withFileTypes: true
   });
 

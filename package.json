@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node dist/main.js",
     "build": "tsc",
+    "postbuild": "node scripts/mod.ts",
     "dev": "node --watch --env-file=.env src/main.ts",
     "test": "node --test"
   },

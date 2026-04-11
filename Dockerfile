@@ -6,8 +6,9 @@ WORKDIR /app
 COPY package*json ./
 RUN npm ci
 
-COPY tsconfig.json ./
+COPY scripts scripts
 COPY src src
+COPY tsconfig.json ./
 RUN NODE_ENV=production npm run build && \
   npm prune --omit=dev --omit=optional
 
