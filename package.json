@@ -6,9 +6,10 @@
   "scripts": {
     "start": "node dist/main.js",
     "build": "tsc",
-    "postbuild": "node scripts/mod.ts",
+    "postbuild": "npm run mod build",
     "dev": "node --watch --env-file=.env src/main.ts",
-    "test": "node --test"
+    "test": "node --test",
+    "mod": "node scripts/mod.ts"
   },
   "keywords": [],
   "author": "",
