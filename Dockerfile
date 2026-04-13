@@ -10,12 +10,10 @@ COPY scripts scripts
 COPY src src
 COPY tsconfig.json ./
 RUN NODE_ENV=production npm run build && \
-  npm prune --omit=dev --omit=optional
+  npm prune --production
 
 FROM base AS runner
 WORKDIR /app
-
-ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
