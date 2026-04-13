@@ -9,7 +9,6 @@ export function gracefulShutdown(shutdown: () => Promise<void>) {
     isShuttingDown = true;
 
     await shutdown();
-
     process.exit();
   }
 
