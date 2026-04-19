@@ -1,12 +1,12 @@
 {
-  "name": "test",
+  "name": "metadata",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/main.ts",
+  "description": "Modular metadata management system",
+  "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main.js",
     "build": "tsc",
-    "postbuild": "npm run mod build",
+    "postbuild": "npm run mod -- build",
     "dev": "node --watch --env-file=.env src/main.ts",
     "test": "node --test",
     "mod": "node scripts/mod.ts"
