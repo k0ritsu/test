@@ -15,6 +15,9 @@
   "author": "",
   "license": "ISC",
   "type": "module",
+  "engines": {
+    "node": "24.14.1"
+  },
   "dependencies": {
     "@sinclair/typebox": "0.34.49",
     "find-my-way": "9.5.0",
@@ -23,8 +26,5 @@
   "devDependencies": {
     "@types/node": "24.10.0",
     "typescript": "6.0.2"
-  },
-  "engines": {
-    "node": "24.14.1"
   }
 }
