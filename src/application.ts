@@ -25,7 +25,12 @@ export async function bootstrap(config: Config) {
     modules.map(async (module) => {
       logger.info(`Registering module ${module.name}@${module.version}`);
 
-      const main = await module.main.register();
+      const main = await module.main.register({
+        config,
+        logger,
+        modules
+      });
+
       main.router?.routes.forEach((route) => {
         router.on(
           route.method,

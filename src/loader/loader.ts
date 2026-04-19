@@ -1,28 +1,8 @@
-import type Router from 'find-my-way';
 import { readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import type { Mod, ModMain } from './types.ts';
 
-interface Module {
-  name: string;
-  description: string;
-  version: string;
-  enabled: boolean;
-  main: string;
-}
-
-interface ModuleMain {
-  register(): Promise<{
-    router?: {
-      routes: Array<{
-        method: Router.HTTPMethod;
-        path: string;
-        opts: Router.RouteOptions;
-        handler: Router.Handler<Router.HTTPVersion.V1>;
-        store: any;
-      }>;
-    };
-  }>;
-}
+const module = 'module.json';
 
 export async function loadModules() {
   const items = await readdir(resolve(import.meta.dirname, '..', 'modules'), {
@@ -37,22 +17,22 @@ export async function loadModules() {
 
       const path = resolve(item.parentPath, item.name);
 
-      const jsonPath = resolve(path, 'module.json');
-      const json: Record<'default', Module> = await import(jsonPath, {
+      const modPath = resolve(path, module);
+      const mod: Record<'default', Mod> = await import(modPath, {
         with: {
           type: 'json'
         }
       });
 
-      if (!json.default.enabled) {
+      if (!mod.default.enabled) {
         return;
       }
 
-      const mainPath = resolve(path, json.default.main);
-      const main: ModuleMain = await import(mainPath);
+      const mainPath = resolve(path, mod.default.main);
+      const main: ModMain = await import(mainPath);
 
       return {
-        ...json.default,
+        ...mod.default,
         main
       };
     })
