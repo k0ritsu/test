@@ -2,15 +2,16 @@
   "name": "metadata",
   "version": "1.0.0",
   "description": "Modular metadata management system",
-  "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main.js",
     "build": "tsc",
-    "postbuild": "npm run imports -- fix && npm run mod -- build",
+    "postbuild": "npx pkg fix-imports && npx mod build",
     "dev": "node --watch --env-file=.env src/main.ts",
-    "test": "node --test",
-    "imports": "node scripts/imports.ts",
-    "mod": "node scripts/mod.ts"
+    "test": "node --test"
+  },
+  "bin": {
+    "mod": "./scripts/mod.ts",
+    "pkg": "./scripts/pkg.ts"
   },
   "keywords": [],
   "author": "",

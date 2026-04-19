@@ -1,7 +1,9 @@
+#!/usr/bin/env node
+
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-async function fix(args: string[]) {
+async function fixImports(args: string[]) {
   const path = resolve('package.json');
 
   const file = await readFile(path, 'utf8');
@@ -25,8 +27,8 @@ async function fix(args: string[]) {
 
 const [command, ...args] = process.argv.slice(2);
 switch (command) {
-  case 'fix':
-    await fix(args);
+  case 'fix-imports':
+    await fixImports(args);
     break;
   default:
     throw new Error('unknown');

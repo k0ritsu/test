@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import assert from 'node:assert';
 import { glob, readFile, writeFile } from 'node:fs/promises';
 import { relative, resolve } from 'node:path';
