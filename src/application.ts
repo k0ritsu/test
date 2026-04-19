@@ -13,11 +13,11 @@ export async function bootstrap(config: Config) {
 
   const router = createRouter();
   const server = await createServer(router, {
-    port: config.PORT
+    port: config.HTTP_PORT
   });
 
   logger.info(
-    `Starting ${config.APP_NAME}@${config.APP_VERSION} on port ${config.PORT}`
+    `Starting ${config.APP_NAME}@${config.APP_VERSION} on port ${config.HTTP_PORT}`
   );
 
   const modules = await loadModules();
