@@ -1,5 +1,5 @@
-export type Level = keyof typeof Level;
-export const Level = {
+type Level = keyof typeof Level;
+const Level = {
   debug: 0,
   info: 1,
   warn: 2,
@@ -13,8 +13,6 @@ interface Config {
 interface Handler {
   (lvl: Level, msg: string, ...args: unknown[]): void;
 }
-
-export type Logger = ReturnType<typeof createLogger>;
 
 export function createLogger(handler: Handler) {
   return {

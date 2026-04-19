@@ -1,5 +1,5 @@
-import type { Config } from '../config/config.ts';
-import type { Logger } from '../logger/logger.ts';
+import type { Config } from '../config/types.ts';
+import type { Logger } from '../logger/types.ts';
 import type { Router } from '../router.ts';
 
 export interface Context {

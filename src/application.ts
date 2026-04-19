@@ -1,4 +1,4 @@
-import type { Config } from './config/config.ts';
+import type { Config } from './config/types.ts';
 import { loadModules } from './loader/loader.ts';
 import { createJsonHandler, createLogger } from './logger/logger.ts';
 import { createRouter } from './router.ts';
