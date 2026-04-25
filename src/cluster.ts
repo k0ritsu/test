@@ -27,7 +27,7 @@ export async function createCluster(
           resolver.resolve();
         }
       } else {
-        cluster.fork();
+        cluster.fork(process.env);
       }
     });
 
@@ -35,13 +35,18 @@ export async function createCluster(
       cluster.fork(process.env);
     }
 
-    return () => resolver.promise;
+    return () => {
+      if (cluster.workers) {
+        Object.values(cluster.workers).forEach((worker) => {
+          worker?.disconnect();
+        });
+      }
+
+      return resolver.promise;
+    };
   } else {
     const { shutdown } = await createWorker();
 
-    return async () => {
-      await shutdown();
-      cluster.worker?.disconnect();
-    };
+    return shutdown;
   }
 }
