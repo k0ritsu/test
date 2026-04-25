@@ -23,6 +23,8 @@ const Config = Type.Object({
   )
 });
 
+export type Config = ReturnType<typeof loadConfig>;
+
 export function loadConfig() {
   return Value.Parse(Config, process.env);
 }
