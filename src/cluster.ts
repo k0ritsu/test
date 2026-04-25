@@ -28,7 +28,6 @@ export async function createCluster(
         }
       } else {
         cluster.fork();
-        console.log('restart');
       }
     });
 
