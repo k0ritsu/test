@@ -1,17 +1,26 @@
+import process from 'node:process';
+import { GRACEFUL_SHUTDOWN_TIMEOUT } from './constants.ts';
+
+class GracefulShutdownTimeout extends Error {
+  constructor(timeout: number) {
+    super(`Graceful shutdown timed out after ${timeout}ms`);
+  }
+}
+
 export function gracefulShutdown(shutdown: () => Promise<void>) {
-  let isShuttingDown = false;
+  async function listener(signal: NodeJS.Signals) {
+    await Promise.race([
+      shutdown(),
+      new Promise<void>((_, reject) => {
+        setTimeout(() => {
+          reject(new GracefulShutdownTimeout(GRACEFUL_SHUTDOWN_TIMEOUT));
+        }, GRACEFUL_SHUTDOWN_TIMEOUT);
+      })
+    ]);
 
-  async function listener() {
-    if (isShuttingDown) {
-      return;
-    }
-
-    isShuttingDown = true;
-
-    await shutdown();
-    process.exit();
+    process.kill(process.pid, signal);
   }
 
-  process.on('SIGINT', listener);
-  process.on('SIGTERM', listener);
+  process.once('SIGINT', listener);
+  process.once('SIGTERM', listener);
 }

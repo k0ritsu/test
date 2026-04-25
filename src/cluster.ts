@@ -1,19 +1,14 @@
 import cluster from 'node:cluster';
 import process from 'node:process';
-import { setTimeout } from 'node:timers/promises';
-import { gracefulShutdown } from './graceful-shutdown.ts';
 
 interface CreateWorker {
   (): Promise<{
-    shutdown: () => Promise<void>;
+    shutdown(): Promise<void>;
   }>;
 }
 
 interface Config {
   parallelism: number;
-  gracefulShutdown: {
-    timeout: number;
-  };
 }
 
 export async function createCluster(
@@ -21,28 +16,33 @@ export async function createCluster(
   config: Config
 ) {
   if (cluster.isPrimary) {
-    for (let i = 0; i < config.parallelism; i++) {
-      cluster.fork(process.env).on('exit', async () => {
-        if (cluster.workers) {
-          const canExit = Object.values(cluster.workers).every((worker) => {
-            return worker?.isDead();
-          });
+    const resolver = Promise.withResolvers<void>();
 
-          if (canExit) {
-            process.exit();
-          }
+    cluster.on('exit', (worker) => {
+      if (worker.exitedAfterDisconnect) {
+        if (
+          cluster.workers &&
+          Object.values(cluster.workers).every((worker) => worker?.isDead())
+        ) {
+          resolver.resolve();
         }
-      });
+      } else {
+        cluster.fork();
+        console.log('restart');
+      }
+    });
+
+    for (let i = 0; i < config.parallelism; i++) {
+      cluster.fork(process.env);
     }
 
-    gracefulShutdown(() => {
-      return setTimeout(config.gracefulShutdown.timeout);
-    });
+    return () => resolver.promise;
   } else {
-    const worker = await createWorker();
+    const { shutdown } = await createWorker();
 
-    gracefulShutdown(() => {
-      return worker.shutdown();
-    });
+    return async () => {
+      await shutdown();
+      cluster.worker?.disconnect();
+    };
   }
 }
