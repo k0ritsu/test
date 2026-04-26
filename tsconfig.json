@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
@@ -24,7 +23,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "dist",
-    "rewriteRelativeImportExtensions": true,
+    "paths": {
+      "@modules/*": ["./src/modules/*"]
+    },
     "rootDir": "src",
     "skipDefaultLibCheck": true,
     "sourceMap": true,

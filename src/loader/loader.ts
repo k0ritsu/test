@@ -1,8 +1,8 @@
 import { readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import type { Mod, ModMain } from './types.ts';
+import type { Mod, ModMain } from './types.js';
 
-const module = 'module.json';
+const MODULE = 'module.json';
 
 export async function loadModules() {
   const items = await readdir(resolve(import.meta.dirname, '..', 'modules'), {
@@ -17,7 +17,7 @@ export async function loadModules() {
 
       const path = resolve(item.parentPath, item.name);
 
-      const modPath = resolve(path, module);
+      const modPath = resolve(path, MODULE);
       const mod: Record<'default', Mod> = await import(modPath, {
         with: {
           type: 'json'

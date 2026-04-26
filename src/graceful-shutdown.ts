@@ -1,5 +1,5 @@
 import process from 'node:process';
-import { GRACEFUL_SHUTDOWN_TIMEOUT } from './constants.ts';
+import { GRACEFUL_SHUTDOWN_TIMEOUT } from './constants.js';
 
 class GracefulShutdownTimeout extends Error {
   constructor(timeout: number) {

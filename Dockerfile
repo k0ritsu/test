@@ -18,10 +18,10 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules /app/node_modules
-COPY --from=builder --chown=nodejs:nodejs /app/dist /app/dist
-COPY --from=builder --chown=nodejs:nodejs /app/package.json /app/package.json
+COPY --from=builder --chown=nodejs:nodejs /app/node_modules node_modules
+COPY --from=builder --chown=nodejs:nodejs /app/dist dist
+COPY --from=builder --chown=nodejs:nodejs /app/package.json package.json
 
 USER nodejs
 
-CMD ["node", "/app/dist/main.js"]
+CMD ["node", "--import", "./dist/modules/import.js", "./dist/main.js"]

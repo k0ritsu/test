@@ -3,23 +3,19 @@
   "version": "1.0.0",
   "description": "Modular metadata management system",
   "scripts": {
-    "start": "node dist/main.js",
+    "start": "node --import ./dist/modules/import.js ./dist/main.js",
     "build": "tsc",
-    "postbuild": "npx pkg fix-imports && npx mod build",
-    "dev": "node --watch --env-file=.env src/main.ts",
+    "postbuild": "npx mod build",
+    "dev": "node --watch --env-file .env --import ./src/modules/import.ts ./src/main.ts",
     "test": "node --test"
   },
   "bin": {
-    "mod": "./scripts/mod.ts",
-    "pkg": "./scripts/pkg.ts"
+    "mod": "./scripts/mod.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
-  "imports": {
-    "#modules/*": "./src/modules/*/module.ts"
-  },
   "engines": {
     "node": "24.14.1"
   },

@@ -1,6 +1,6 @@
-import type { Config } from '../config/config.ts';
-import type { Logger } from '../logger/logger.ts';
-import type { Router } from '../router.ts';
+import type { Config } from '../config/config.js';
+import type { Logger } from '../logger/logger.js';
+import type { Router } from '../router.js';
 
 export interface Context {
   config: Config;

@@ -5,8 +5,8 @@ import { glob, readFile, writeFile } from 'node:fs/promises';
 import { relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 
-const modlock = '.modlock.json';
-const modrc = '.modrc.json';
+const modlock = 'modlock.json';
+const modrc = 'modrc.json';
 const module = 'module.json';
 
 interface Mod {

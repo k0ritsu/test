@@ -1,12 +1,12 @@
-import { bootstrap } from './application.ts';
-import { loadConfig } from './config/config.ts';
-import { gracefulShutdown } from './graceful-shutdown.ts';
+import { bootstrap } from './application.js';
+import { loadConfig } from './config/config.js';
+import { gracefulShutdown } from './graceful-shutdown.js';
 
 const config = loadConfig();
 
 if (config.USE_PARALLELISM) {
   const { availableParallelism } = await import('node:os');
-  const { createCluster } = await import('./cluster.ts');
+  const { createCluster } = await import('./cluster.js');
 
   gracefulShutdown(
     await createCluster(

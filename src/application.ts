@@ -1,8 +1,8 @@
-import type { Config } from './config/config.ts';
-import { loadModules } from './loader/loader.ts';
-import { createJsonHandler, createLogger } from './logger/logger.ts';
-import { createRouter } from './router.ts';
-import { createServer } from './server.ts';
+import type { Config } from './config/config.js';
+import { loadModules } from './loader/loader.js';
+import { createJsonHandler, createLogger } from './logger/logger.js';
+import { createRouter } from './router.js';
+import { createServer } from './server.js';
 
 export async function bootstrap(config: Config) {
   const logger = createLogger(

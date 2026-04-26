@@ -1,4 +1,9 @@
 *
+# Git
 !.gitignore
-!.modlock.json
-!.modrc.json
+# Import
+!import.ts
+!loader.ts
+# Mod
+!modlock.json
+!modrc.json
