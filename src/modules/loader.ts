@@ -12,7 +12,7 @@ export const resolve: ResolveHook = (specifier, context, nextResolve) => {
   }
 
   if (context.parentURL?.startsWith(MODULES)) {
-    specifier = specifier.replace(/@modules/, import.meta.dirname);
+    specifier = specifier.replace(/#modules/, import.meta.dirname);
   }
 
   specifier = specifier.replace(/\.js$/, EXTENSION);

@@ -24,7 +24,7 @@
     "noUnusedParameters": true,
     "outDir": "dist",
     "paths": {
-      "@modules/*": ["./src/modules/*"]
+      "#modules/*": ["./src/modules/*"]
     },
     "rootDir": "src",
     "skipDefaultLibCheck": true,
