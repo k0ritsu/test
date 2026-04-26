@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "lib": ["ESNext"],
-    "types": ["node"]
+    "noEmit": true,
+    "types": ["node"],
+    "verbatimModuleSyntax": true
   }
 }
