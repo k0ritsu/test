@@ -1,0 +1,5 @@
+# Build
+dist
+# Mod
+src/modules/**/tsconfig.json
+tsconfig.build.json
