@@ -86,6 +86,11 @@
     "name": "metadata",
     "version": "0.1.0"
   },
+  "async-local-storage": {
+    "dependencies": {},
+    "name": "async-local-storage",
+    "version": "1.0.0"
+  },
   "async": {
     "dependencies": {},
     "name": "async",
