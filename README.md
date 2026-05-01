@@ -1,156 +1,187 @@
-# README
+# Metadata
 
-## Module System (Mod)
+Modular metadata management system built on Node.js, TypeScript, and
+`find-my-way`.
 
-This project uses a module management system implemented in `scripts/mod.ts`.
-The system allows you to initialize, build, and manage application modules.
+The application starts an HTTP server, loads enabled modules from
+`src/modules/*/module.json`, and lets modules register routes through a shared
+runtime context.
 
-## Available Commands
+## Requirements
 
-### init
+- Node.js `24.14.1`
+- npm
+- Docker and Docker Compose, optional
 
-Initializes the module system with registry configuration.
+## Setup
 
-**Usage:**
-
-```bash
-npm run mod -- init --registry <URL>
-```
-
-**Options:**
-
-- `--registry <URL>` **(required)** - Module registry URL
-- `--rootDir <path>` **(optional)** - Root directory for modules (default:
-  `src`)
-
-**Description:** Creates two configuration files in the `src/modules/` directory
-(or specified via `--rootDir`):
-
-- `.modrc.json` - Configuration with registry URL
-- `.modlock.json` - Dependency lock file (initially empty)
-
-**Examples:**
+Install dependencies:
 
 ```bash
-npm run mod -- init --registry http://localhost:8080
-npm run mod -- init --registry http://registry.example.com --rootDir src
+npm install
 ```
 
-### build
-
-Builds modules and converts TypeScript file paths to JavaScript.
-
-**Usage:**
+Create a local environment file:
 
 ```bash
-npm run mod -- build
+cp .env.example .env
 ```
 
-**Options:**
+Required application variables:
 
-- `--rootDir <path>` **(optional)** - Root directory for modules (default:
-  `src`)
-- `--outDir <path>` **(optional)** - Output directory for built files (default:
-  `dist`)
+| Variable          | Description                                            | Example    |
+| ----------------- | ------------------------------------------------------ | ---------- |
+| `APP_NAME`        | Application name used in startup logs                  | `metadata` |
+| `APP_VERSION`     | Application version used in startup logs               | `1.0.0`    |
+| `HTTP_PORT`       | HTTP server port                                       | `3000`     |
+| `USE_PARALLELISM` | Start one worker per available CPU when `true`         | `false`    |
+| `LOG_LEVEL`       | Minimum log level: `debug`, `info`, `warn`, or `error` | `debug`    |
 
-**Description:**
+## Development
 
-- Scans all `module.json` files in the `src/modules/*/` directory
-- For each `module.json` with a `main` field, replaces `.ts` extension with
-  `.js`
-- Copies processed files to the `dist` directory, preserving directory structure
-
-**Examples:**
+Run the application in watch mode:
 
 ```bash
-npm run mod -- build
-npm run mod -- build --rootDir src --outDir dist
+npm run dev
 ```
 
-### publish
+The development command loads `.env` and registers the module loader from
+`src/modules/import.ts`, so module imports can use the same `.js` specifiers
+that are emitted for production builds.
 
-Publishes a module to the registry.
-
-**Usage:**
+Check the server:
 
 ```bash
-npm run mod -- publish
+curl http://localhost:3000/ping
 ```
 
-**Status:** ⚠️ Not implemented
+## Build and Run
 
-### install
-
-Installs module dependencies.
-
-**Usage:**
+Build the project:
 
 ```bash
-npm run mod -- install
+npm run build
 ```
 
-**Status:** ⚠️ Not implemented
+The build script compiles the root project and every generated module
+`tsconfig.json`. It also runs the module build step, which copies each
+`module.json` file into `dist/modules` and keeps runtime `main` entries using
+`.js` extensions.
 
-### remove
-
-Removes installed modules.
-
-**Usage:**
+Start the compiled application:
 
 ```bash
-npm run mod -- remove
+npm start
 ```
 
-**Status:** ⚠️ Not implemented
+Run with Docker Compose:
 
-## Module Structure
+```bash
+docker compose up --build
+```
 
-Each module should contain a `module.json` file with module description:
+## Module System
+
+Modules live under `src/modules`. Each top-level module is discovered from a
+`module.json` file:
 
 ```json
 {
-  "name": "module-name",
+  "name": "ping",
+  "description": "A simple ping command to check if the api is responsive",
   "version": "1.0.0",
-  "main": "src/main.ts"
+  "enabled": true,
+  "main": "src/main.js",
+  "dependencies": {}
 }
 ```
 
-Modules are located in the `src/modules/` directory and follow this structure:
+Fields:
 
-```
-src/modules/
-├── module-name-1/
-│   ├── module.json
-│   └── src/
-│       └── main.ts
-├── module-name-2/
-│   ├── module.json
-│   └── src/
-│       └── main.ts
-```
+- `name`: unique module name.
+- `description`: human-readable module description.
+- `version`: module version.
+- `enabled`: only enabled modules with a `main` entry are loaded at runtime.
+- `main`: module entrypoint. Use a `.js` specifier even when the source file is
+  TypeScript, for example `src/main.js` for `src/main.ts`.
+- `dependencies`: optional map of module names to versions.
 
-## Configuration Files
+A module entrypoint exports an async `register` function:
 
-### .modrc.json
+```ts
+import type { Ctx } from '#core/loader';
 
-Contains registry configuration:
-
-```json
-{
-  "registry": "http://localhost:8080"
+export async function register(ctx: Ctx) {
+  ctx.router.on('GET', '/example', async (_req, res) => {
+    res
+      .writeHead(200, {
+        'Content-Type': 'application/json'
+      })
+      .end(JSON.stringify({ ok: true }));
+  });
 }
 ```
 
-### .modlock.json
+The registration context contains:
 
-Lock file containing information about installed module dependencies:
+- `router`: shared `find-my-way` router.
+- `config`: parsed application configuration.
+- `logger`: application logger.
+- `modules`: loaded module metadata and entrypoints.
 
-```json
-{
-  "module-name": {
-    "name": "module-name",
-    "version": "1.0.0",
-    "dependencies": {}
-  }
-}
+## Module CLI
+
+The module CLI is implemented in `scripts/mod.ts`.
+
+Initialize module configuration and regenerate module TypeScript references:
+
+```bash
+node ./scripts/mod.ts init --registry http://localhost:8080
+```
+
+If `src/modules/modrc.json` already exists, `--registry` is not required:
+
+```bash
+node ./scripts/mod.ts init
+```
+
+Build module metadata into `dist/modules`:
+
+```bash
+node ./scripts/mod.ts build
+```
+
+Current command status:
+
+| Command   | Status          |
+| --------- | --------------- |
+| `init`    | Implemented     |
+| `build`   | Implemented     |
+| `create`  | Not implemented |
+| `install` | Not implemented |
+| `publish` | Not implemented |
+| `remove`  | Not implemented |
+
+## Generated Files
+
+The `init` command maintains module build metadata:
+
+- `src/modules/modrc.json`: module registry configuration.
+- `src/modules/modlock.json`: generated module dependency lock file.
+- `src/modules/**/tsconfig.json`: generated per-module TypeScript projects.
+- `tsconfig.build.json`: generated build references for the root project and
+  modules.
+
+Regenerate these files after adding, removing, or changing module dependencies:
+
+```bash
+node ./scripts/mod.ts init
+```
+
+## Tests
+
+Run the Node.js test runner:
+
+```bash
+npm test
 ```
