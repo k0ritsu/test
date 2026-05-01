@@ -5,6 +5,8 @@ import { parseArgs } from 'node:util';
 import { MODLOCK, MODRC, MODULE } from './common/constants.ts';
 import type { Mod, Modlock, Modrc } from './common/types.ts';
 
+type Key = `${Mod['name']}@${Mod['version']}`;
+
 export async function init(args: string[]) {
   const { values } = parseArgs({
     strict: true,
@@ -37,98 +39,104 @@ export async function init(args: string[]) {
   ]);
 }
 
-async function buildModlock(): Promise<Modlock> {
+async function buildModlock() {
   const modules = await loadModules();
   const modlock: Modlock = {};
 
-  for (const moduleName of modules.keys()) {
-    modlock[moduleName] = buildModlockNode(moduleName, modules, new Set());
+  for (const key of modules.keys()) {
+    const [name = ''] = key.split('@');
+    modlock[name] = buildModlockNode(key, modules, new Set<Key>());
   }
 
   return modlock;
 }
 
 async function loadModules() {
-  const dict = new Map<Mod['name'], Mod>();
+  const modules = new Map<Key, Mod>();
 
-  for await (const mod of glob(resolve('src', 'modules', '*', MODULE))) {
-    const file = await readFile(mod, 'utf8');
-    const json = JSON.parse(file) as Partial<Mod>;
+  for await (const path of glob(resolve('src', 'modules', '**', MODULE))) {
+    const mod: Partial<Mod> = JSON.parse(
+      await readFile(path, {
+        encoding: 'utf8'
+      })
+    );
 
-    assert(json.name?.length, `${mod}: name is required`);
-    assert(json.version?.length, `${mod}: version is required`);
+    assert(mod.name, `${path}: name is required`);
+    assert(mod.version, `${path}: version is required`);
 
-    dict.set(json.name, {
-      dependencies: parseDependencies(json.dependencies),
-      name: json.name,
-      version: json.version
+    const key: Key = `${mod.name}@${mod.version}`;
+    modules.set(key, {
+      dependencies: ensureDependencies(mod.name, mod.dependencies),
+      name: mod.name,
+      version: mod.version
     });
   }
 
-  return dict;
+  return modules;
 }
 
-function parseDependencies(dependencies: Mod['dependencies'] = {}) {
+function ensureDependencies(
+  name: string,
+  dependencies: Mod['dependencies'] = {}
+) {
   assert(
     typeof dependencies === 'object' &&
       dependencies !== null &&
       !Array.isArray(dependencies),
-    'dependencies must be an object'
+    `${name}: dependencies must be an object`
   );
 
-  const parsed: Mod['dependencies'] = {};
-
   for (const [name, version] of Object.entries(dependencies)) {
-    assert(
-      version?.length,
-      `${name}: dependency version must be a non-empty string`
-    );
-
-    parsed[name] = version;
+    assert(version, `${name}: dependency version must be a non-empty string`);
   }
 
-  return parsed;
+  return dependencies;
 }
 
 function buildModlockNode(
-  name: string,
-  modules: Map<string, Mod>,
-  stack: Set<string>,
-  fallbackVersion = ''
+  key: Key,
+  modules: Map<Key, Mod>,
+  stack: Set<Key>,
+  fallback: Pick<Mod, 'version'> = {
+    version: ''
+  }
 ): Modlock[string] {
-  const manifest = modules.get(name);
-  if (!manifest) {
+  const mod = modules.get(key);
+  if (!mod) {
+    const [name = ''] = key.split('@');
+
     return {
       dependencies: {},
       name,
-      version: fallbackVersion
+      version: fallback.version
     };
   }
 
   const dependencies: Modlock = {};
 
-  const nextStack = new Set(stack);
-  nextStack.add(name);
+  const nextStack = new Set<Key>(stack);
+  nextStack.add(key);
 
-  for (const [name, version] of Object.entries(manifest.dependencies).sort(
-    ([left], [right]) => left.localeCompare(right)
-  )) {
-    if (nextStack.has(name)) {
+  for (const [name, version] of Object.entries(mod.dependencies)) {
+    const key: Key = `${name}@${version}`;
+    if (nextStack.has(key)) {
       dependencies[name] = {
+        dependencies: {},
         name,
-        version: modules.get(name)?.version ?? version,
-        dependencies: {}
+        version: modules.get(key)?.version ?? version
       };
 
       continue;
     }
 
-    dependencies[name] = buildModlockNode(name, modules, nextStack, version);
+    dependencies[name] = buildModlockNode(key, modules, nextStack, {
+      version
+    });
   }
 
   return {
     dependencies,
-    name: manifest.name,
-    version: manifest.version
+    name: mod.name,
+    version: mod.version
   };
 }

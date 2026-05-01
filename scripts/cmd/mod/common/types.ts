@@ -5,7 +5,7 @@ export interface Mod {
     [mod: string]: Version;
   };
   name: string;
-  version: string;
+  version: Version;
 }
 
 export interface Modlock {
