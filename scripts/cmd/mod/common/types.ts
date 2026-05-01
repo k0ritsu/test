@@ -1,16 +1,18 @@
-export type Version = string;
-
 export interface Mod {
-  dependencies: {
-    [mod: string]: Version;
-  };
   name: string;
-  version: Version;
+  version: string;
+  enabled?: boolean;
+  main?: string;
+  dependencies: {
+    [mod: Mod['name']]: Mod['version'];
+  };
 }
 
 export interface Modlock {
-  [mod: string]: Omit<Mod, 'dependencies'> & {
+  [mod: Mod['name']]: {
     dependencies: Modlock;
+    name: Mod['name'];
+    version: Mod['version'];
   };
 }
 
