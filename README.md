@@ -1,7 +1,6 @@
 # Metadata
 
-Modular metadata management system built on Node.js, TypeScript, and
-`find-my-way`.
+Modular metadata management system built on Node.js and TypeScript.
 
 The application starts an HTTP server, loads enabled modules from
 `src/modules/*/module.json`, and lets modules register routes through a shared
@@ -18,7 +17,7 @@ runtime context.
 Install dependencies:
 
 ```bash
-npm install
+npm ci
 ```
 
 Create a local environment file:
@@ -136,28 +135,28 @@ The module CLI is implemented in `scripts/mod.ts`.
 Initialize module configuration and regenerate module TypeScript references:
 
 ```bash
-node ./scripts/mod.ts init --registry http://localhost:8080
+npx mod init --registry http://localhost:8080
 ```
 
 If `src/modules/modrc.json` already exists, `--registry` is not required:
 
 ```bash
-node ./scripts/mod.ts init
+npx mod init
 ```
 
 Build module metadata into `dist/modules`:
 
 ```bash
-node ./scripts/mod.ts build
+npx mod build
 ```
 
 Current command status:
 
 | Command   | Status          |
 | --------- | --------------- |
-| `init`    | Implemented     |
 | `build`   | Implemented     |
 | `create`  | Not implemented |
+| `init`    | Implemented     |
 | `install` | Not implemented |
 | `publish` | Not implemented |
 | `remove`  | Not implemented |
@@ -175,7 +174,7 @@ The `init` command maintains module build metadata:
 Regenerate these files after adding, removing, or changing module dependencies:
 
 ```bash
-node ./scripts/mod.ts init
+npx mod init
 ```
 
 ## Tests
