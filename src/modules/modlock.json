@@ -92,7 +92,13 @@
     "version": "1.0.0"
   },
   "async": {
-    "dependencies": {},
+    "dependencies": {
+      "async-local-storage": {
+        "dependencies": {},
+        "name": "async-local-storage",
+        "version": "1.0.0"
+      }
+    },
     "name": "async",
     "version": "0.1.0"
   }
