@@ -1,13 +1,6 @@
+import assert from 'node:assert';
 import { glob, readFile, rm, writeFile } from 'node:fs/promises';
-import {
-  basename,
-  dirname,
-  isAbsolute,
-  join,
-  relative,
-  resolve,
-  sep
-} from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { MODULE } from '../constants.ts';
 import type { Mod } from '../types.ts';
 
@@ -53,11 +46,13 @@ async function loadModules() {
       })
     );
 
+    assert(mod.name, `${path}: name is required`);
+
     const root = dirname(path);
     modules.push({
       root,
       dependencies: mod.dependencies ?? {},
-      name: basename(path)
+      name: mod.name
     });
   }
 

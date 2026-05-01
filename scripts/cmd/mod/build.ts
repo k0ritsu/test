@@ -1,5 +1,5 @@
-import { glob, readFile, writeFile } from 'node:fs/promises';
-import { relative, resolve } from 'node:path';
+import { glob, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname, relative, resolve } from 'node:path';
 import { MODULE } from './common/constants.ts';
 import type { Mod } from './common/types.ts';
 
@@ -15,9 +15,10 @@ export async function build(args: string[]) {
       mod.main = mod.main.replace(/\.ts$/, '.js');
     }
 
-    await writeFile(
-      resolve('dist', relative('dist', path)),
-      JSON.stringify(mod, undefined, 2)
-    );
+    const dist = resolve('dist', relative(resolve('src'), path));
+    await mkdir(dirname(dist), {
+      recursive: true
+    });
+    await writeFile(dist, JSON.stringify(mod, undefined, 2));
   }
 }

@@ -8,7 +8,7 @@ RUN npm ci
 
 COPY scripts scripts
 COPY src src
-COPY tsconfig.json ./
+COPY tsconfig*.json ./
 RUN NODE_ENV=production npm run build && \
   npm prune --production
 
