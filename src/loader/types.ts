@@ -2,7 +2,8 @@ import type { Config } from '../config/config.js';
 import type { Logger } from '../logger/logger.js';
 import type { Router } from '../router.js';
 
-export interface Context {
+export interface Ctx {
+  router: Router;
   config: Config;
   logger: Logger;
   modules: Array<
@@ -16,12 +17,10 @@ export interface Mod {
   name: string;
   description: string;
   version: string;
-  enabled: boolean;
-  main: string;
+  enabled?: boolean;
+  main?: string;
 }
 
 export interface ModMain {
-  register(context: Context): Promise<{
-    router?: Router;
-  }>;
+  register(ctx: Ctx): Promise<void>;
 }

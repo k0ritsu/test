@@ -25,20 +25,11 @@ export async function bootstrap(config: Config) {
     modules.map(async (module) => {
       logger.info(`Registering module ${module.name}@${module.version}`);
 
-      const main = await module.main.register({
+      await module.main.register({
+        router,
         config,
         logger,
         modules
-      });
-
-      main.router?.routes.forEach((route) => {
-        router.on(
-          route.method,
-          route.path,
-          route.opts,
-          route.handler,
-          route.store
-        );
       });
     })
   );
