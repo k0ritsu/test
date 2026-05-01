@@ -85,5 +85,10 @@
     "dependencies": {},
     "name": "metadata",
     "version": "0.1.0"
+  },
+  "async": {
+    "dependencies": {},
+    "name": "async",
+    "version": "0.1.0"
   }
 }
