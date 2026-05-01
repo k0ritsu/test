@@ -25,12 +25,12 @@ export async function createTsconfigs() {
     ...modules.map((mod) =>
       writeFile(
         resolve(mod.root, 'tsconfig.json'),
-        `${JSON.stringify(createModuleTsconfig(mod, modules), undefined, 2)}\n`
+        JSON.stringify(createModuleTsconfig(mod, modules), undefined, 2)
       )
     ),
     writeFile(
       resolve('tsconfig.build.json'),
-      `${JSON.stringify(createBuildTsconfig(modules), undefined, 2)}\n`
+      JSON.stringify(createBuildTsconfig(modules), undefined, 2)
     ),
     removeStaleModuleTsconfigs(modules)
   ]);
