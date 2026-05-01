@@ -24,7 +24,7 @@
       }
     },
     "name": "metadata-table",
-    "version": "1.0.0"
+    "version": "0.1.0"
   },
   "metadata-module": {
     "dependencies": {
@@ -35,7 +35,7 @@
       }
     },
     "name": "metadata-module",
-    "version": "1.0.0"
+    "version": "0.1.0"
   },
   "metadata-mapper": {
     "dependencies": {
@@ -46,7 +46,7 @@
       }
     },
     "name": "metadata-mapper",
-    "version": "1.0.0"
+    "version": "0.1.0"
   },
   "metadata-connector": {
     "dependencies": {

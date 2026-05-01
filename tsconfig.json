@@ -1,41 +1,10 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "declaration": true,
-    "erasableSyntaxOnly": true,
-    "esModuleInterop": true,
-    "exactOptionalPropertyTypes": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "lib": ["ESNext"],
-    "module": "nodenext",
-    "moduleDetection": "force",
-    "moduleResolution": "nodenext",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "outDir": "dist",
-    "paths": {
-      "#modules/*": ["./src/modules/*"]
-    },
     "rootDir": "src",
-    "skipDefaultLibCheck": true,
-    "sourceMap": true,
-    "strict": true,
-    "strictBindCallApply": true,
-    "strictNullChecks": true,
-    "target": "esnext",
-    "types": ["node"],
-    "verbatimModuleSyntax": true
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
-  "exclude": ["**/*.spec.ts", "**/*.test.ts"],
+  "exclude": ["src/modules/*/**/*", "**/*.spec.ts", "**/*.test.ts"],
   "include": ["src/**/*"]
 }

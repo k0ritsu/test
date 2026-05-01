@@ -45,8 +45,12 @@ async function resolveModulesAlias(
   const candidates = createDependencyCandidates(dependency, rest, context);
   for (const candidate of candidates) {
     const resolved = withRuntimeExtension(candidate);
-    if (await exists(resolved)) {
+    try {
+      await access(resolved);
+
       return resolved;
+    } catch {
+      continue;
     }
   }
 
@@ -134,14 +138,4 @@ function isInsidePath(context: ResolveHookContext, path: string) {
 
 function withRuntimeExtension(specifier: string): string {
   return specifier.replace(/\.js$/, EXTENSION);
-}
-
-async function exists(path: string): Promise<boolean> {
-  try {
-    await access(path);
-
-    return true;
-  } catch {
-    return false;
-  }
 }

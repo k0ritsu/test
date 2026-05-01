@@ -1,5 +1,6 @@
 # Build
 dist
+tsconfig.build.json
 # Deps
 node_modules
 # Env

@@ -1,8 +1,9 @@
 import assert from 'node:assert';
-import { glob, readFile, writeFile } from 'node:fs/promises';
+import { access, glob, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { MODLOCK, MODRC, MODULE } from './common/constants.ts';
+import { createTsconfigs } from './common/helpers/tsconfig.ts';
 import type { Mod, Modlock, Modrc } from './common/types.ts';
 
 type Key = `${Mod['name']}@${Mod['version']}`;
@@ -18,25 +19,37 @@ export async function init(args: string[]) {
     args
   });
 
-  assert(values.registry, 'registry is required');
-
   const modlock = await buildModlock();
   await Promise.all([
+    writeModrc(values.registry),
     writeFile(
-      resolve('src', 'modules', MODRC),
+      resolve('src', 'modules', MODLOCK),
+      JSON.stringify(modlock, undefined, 2)
+    ),
+    createTsconfigs()
+  ]);
+}
+
+async function writeModrc(registry?: string) {
+  const path = resolve('src', 'modules', MODRC);
+  try {
+    await access(path);
+
+    return;
+  } catch {
+    assert(registry, 'registry is required');
+
+    return writeFile(
+      path,
       JSON.stringify(
         {
-          registry: values.registry
+          registry
         } satisfies Modrc,
         undefined,
         2
       )
-    ),
-    writeFile(
-      resolve('src', 'modules', MODLOCK),
-      JSON.stringify(modlock, undefined, 2)
-    )
-  ]);
+    );
+  }
 }
 
 async function buildModlock() {
