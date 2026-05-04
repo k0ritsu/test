@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
     "allowImportingTsExtensions": true,
-    "lib": ["ESNext"],
-    "noEmit": true,
-    "types": ["node"],
-    "verbatimModuleSyntax": true
-  }
+    "noEmit": true
+  },
+  "extends": "../tsconfig.base.json"
 }
