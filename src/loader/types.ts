@@ -1,10 +1,8 @@
-import type { Config } from '../config/config.js';
-import type { Logger } from '../logger/logger.js';
-import type { Router } from '../router.js';
+import type { Logger } from '../logger/types.js';
+import type { Router } from '../router/types.js';
 
 export interface Ctx {
   router: Router;
-  config: Config;
   logger: Logger;
   modules: Array<
     Omit<Mod, 'main'> & {
@@ -22,5 +20,7 @@ export interface Mod {
 }
 
 export interface ModMain {
-  register(ctx: Ctx): Promise<void>;
+  register(ctx: Ctx): Promise<{
+    shutdown?(): Promise<void>;
+  }>;
 }

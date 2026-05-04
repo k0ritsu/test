@@ -1,7 +1,5 @@
 import Router from 'find-my-way';
-import { NotFound } from './errors/not-found.js';
-
-export type Router = ReturnType<typeof createRouter>;
+import { NotFound } from '../errors/not-found.js';
 
 export function createRouter() {
   return Router({

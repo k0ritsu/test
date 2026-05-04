@@ -16,7 +16,9 @@ const BASE_TSCONFIG = resolve('tsconfig.base.json');
 const ROOT_TSCONFIG = resolve('tsconfig.json');
 
 const CORE_ALIASES = {
-  '#core/loader': resolve('src', 'loader', 'types.ts')
+  '#core/loader': resolve('src', 'loader', 'types.ts'),
+  '#core/logger': resolve('src', 'logger', 'types.ts'),
+  '#core/router': resolve('src', 'router', 'types.ts')
 };
 
 export async function createTsconfigs() {

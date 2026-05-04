@@ -14,8 +14,6 @@ interface Handler {
   (lvl: Level, msg: string, ...args: unknown[]): void;
 }
 
-export type Logger = ReturnType<typeof createLogger>;
-
 export function createLogger(handler: Handler) {
   return {
     debug(msg: string, ...args: unknown[]) {

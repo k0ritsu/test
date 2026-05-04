@@ -1,7 +1,7 @@
 import type { Config } from './config/config.js';
 import { loadModules } from './loader/loader.js';
 import { createJsonHandler, createLogger } from './logger/logger.js';
-import { createRouter } from './router.js';
+import { createRouter } from './router/router.js';
 import { createServer } from './server.js';
 
 export async function bootstrap(config: Config) {
@@ -21,26 +21,28 @@ export async function bootstrap(config: Config) {
   );
 
   const modules = await loadModules();
-  await Promise.all(
+  const hooks = await Promise.all(
     modules.map(async (module) => {
       logger.info(`Registering module ${module.name}@${module.version}`);
 
-      await module.main.register({
+      return module.main.register({
         router,
-        config,
         logger,
         modules
       });
     })
   );
 
-  return () => {
+  return async () => {
     const resolver = Promise.withResolvers<void>();
 
     server.close(() => {
       resolver.resolve();
     });
 
-    return resolver.promise;
+    await Promise.all([
+      resolver.promise,
+      ...hooks.map(({ shutdown }) => shutdown?.())
+    ]);
   };
 }
