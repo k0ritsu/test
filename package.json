@@ -4,9 +4,9 @@
   "description": "Modular metadata management system",
   "scripts": {
     "start": "node --import ./dist/modules/import.js ./dist/main.js",
-    "prebuild": "node ./scripts/mod.ts init",
+    "prebuild": "npx mod init",
     "build": "tsc -b tsconfig.build.json",
-    "postbuild": "node ./scripts/mod.ts build",
+    "postbuild": "npx mod build",
     "dev": "node --watch --env-file .env --import ./src/modules/import.ts ./src/main.ts",
     "test": "node --test"
   },
